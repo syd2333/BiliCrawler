@@ -1,0 +1,11 @@
+{
+    "title": "绝处逢生 逆境爆发!《Girls Band Cry》绝唱回响",
+    "pubdate": "2024-05-19 01:39:16",
+    "desc": "以后不要再问我为什么girls band cry每更新一集我就要开一次香槟\n我只能说香槟是我对动画修饰词的上限\n而不是gbc和花田的上限",
+    "stat": {
+        "like": 297,
+        "coin": 89,
+        "favorite": 71,
+        "reply": 13
+    }
+}

@@ -21,16 +21,17 @@ def get_video_info(bv_number):
     else:
         return None
 
-def get_related_videos(video_data, max_related):
-    related_videos = []
-    if 'ugc_season' in video_data:
-        for section in video_data['ugc_season']['sections']:
-            if section['type'] == 1:
-                for episode in section['episodes']:
-                    related_videos.append(episode['bvid'])
-                    if len(related_videos) >= max_related:
-                        return related_videos[:max_related]
-    return related_videos[:max_related]
+def get_related_videos(aid, max_related):
+    url = f"https://api.bilibili.com/x/web-interface/view/detail?aid={aid}"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
+    }
+    data = get_json_data(url, headers)
+    if data['code'] == 0:
+        related = data['data']['Related']  # 获取相关视频列表
+        return [video['bvid'] for video in related][:max_related]
+    else:
+        return []
 
 def get_comments(oid, num_pages):
     headers = {
@@ -85,7 +86,7 @@ def save_data(start_bv, num_pages, max_related):
             json.dump(comments, file, ensure_ascii=False, indent=4)
         print(f"视频 {start_bv} 的评论数据已保存")
         print(f"开始爬取视频 {start_bv} 的相关视频数据...")
-        related_videos = get_related_videos(video_data, max_related)
+        related_videos = get_related_videos(video_data['aid'], max_related)
         for i, related_bv in enumerate(related_videos, start=1):
             print(f"开始爬取相关视频 {i}/{len(related_videos)}: {related_bv}")
             related_data = get_video_info(related_bv)
@@ -119,7 +120,7 @@ def save_data(start_bv, num_pages, max_related):
 def main():
     start_bv = input("请输入起始视频的BV号: ")
     num_pages = int(input("请输入要爬取的评论页数: "))
-    max_related = int(input("请输入每个视频最多的相关视频数量(1-10): "))
+    max_related = int(input("请输入视频最多的相关视频数量(1-10): "))
     max_related = max(1, min(10, max_related))
     save_data(start_bv, num_pages, max_related)
     print("爬取完成")
